@@ -27,7 +27,7 @@ sed -i "s/# c.HubFactory.ip = '127.0.0.1'/c.HubFactory.ip = '*'/" ipcontroller_c
 grep c.HubFactory.ip ipcontroller_config.py
 
 if [ "$2" = "MPI" ]; then
-  IPVARIABLE="c.IPClusterStart.engine_launcher_class"
+  IPVARIABLE="c.IPClusterEngines.engine_launcher_class"
   IPVALUE="EngineSetLauncher"
   sed -i "s/# $IPVARIABLE = 'Local$IPVALUE'/$IPVARIABLE = 'MPI$IPVALUE'/" ipcluster_config.py
   grep $IPVARIABLE ipcluster_config.py
