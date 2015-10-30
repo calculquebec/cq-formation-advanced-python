@@ -1,5 +1,5 @@
 /* approx_pi_swig.i */
-/*  Example of wrapping cos function from math.h using SWIG. */
+/*  Example of wrapping approx_pi using SWIG. */
 %module approx_pi_swig
 %{
     /* the resulting C file should be built as a python extension */

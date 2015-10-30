@@ -3,7 +3,11 @@
 #PBS -l walltime=...
 #PBS -V
 #PBS -N smiley
+#PBS -A class
 
 cd $PBS_O_WORKDIR
 
-mpiexec -n # python3 smiley.pbs > smiley.out
+module add python/2.7.3
+module add mvapich2/1.9-gcc
+
+mpiexec -n # python smiley.pbs > smiley.out
