@@ -49,9 +49,4 @@ def main():
         seqPairs.append([seqA, seqB])
 
     client = Client()
-
-    # Note: for ipclustergenomic to be loaded on the cluster side, engines
-    # must have been started in the same directory as ipclustergenomic.py
-    with client[:].sync_imports():from ipclustergenomic import editDistance
-
     printRes(client[:].map_sync(edProxy, seqPairs))
