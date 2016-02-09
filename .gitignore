@@ -1,2 +1,5 @@
 approx_pi
 __pycache__/
+build/
+approx_pi_cython*.c
+approx_pi_cython*.so
