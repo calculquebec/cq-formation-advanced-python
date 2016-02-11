@@ -77,7 +77,7 @@ PI is approximately 3.1415926435893260, Error is 0.0000000100004671
 Time = 0.7333470000000000 sec
 ~~~
 
-That was fast. We are still about twice slower than C, but it's not bad, taking into account we did not have to change a single line of code. It is important to note that PyPy has it's [limits](http://pypy.org/compat.html):
+That was fast. We are still about twice slower than C, but it's not bad, taking into account we did not have to change a single line of code. It's important to note that PyPy has its [limits](http://pypy.org/compat.html):
 
 1. It is only Python 2.7.10 compliant, not 3.x (yet).
 2. It supports most of the standard library modules.
