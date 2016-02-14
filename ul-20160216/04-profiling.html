@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="generator" content="pandoc">
+    <title>Calcul Québec: Advanced and Parallel Python</title>
+    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" type="text/css" href="css/bootstrap/bootstrap.css" />
+    <link rel="stylesheet" type="text/css" href="css/bootstrap/bootstrap-theme.css" />
+    <link rel="stylesheet" type="text/css" href="css/swc.css" />
+    <meta charset="UTF-8" />
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body class="lesson">
+    <div class="container card">
+      <div class="banner">
+        <img style="height: 50px; margin-top: 20px;" src="img/logo-universite-laval.jpg" />
+        <a href="http://www.calculquebec.ca" title="Calcul Québec"><img style="height: 70px; float: right; margin-top: 10px;" src="img/calculquebec_logo_small.jpg" /></a>
+      </div>
+      <article>
+      <div class="row">
+        <div class="col-md-10 col-md-offset-1">
+                    <a href="index.html"><h1 class="title">Advanced and Parallel Python</h1></a>
+          <h2 class="subtitle">Finding Bottlenecks</h2>
+          <p>Now that we have learned some techniques with no to minor code modifications, we might want to tweak our actual code itself since there are chances we can do better. The way to determine what part of our code needs attention is called profiling. Profilers come in a variety of shapes and functionalities but what we’ll use are two deterministic/event-based profilers as opposed to statistical profilers. This means that instead of relying on partial data by sampling at regular intervals, hit count will be exact and can be reproduced. The downside to using an event-based profiler is that is can slow down your code, sometimes significantly.</p>
+<p>Here are some things to keep in mind before optimizing:</p>
+<ul>
+<li>Make sure your code works/is correct beforehand.</li>
+<li>Make sure you focus on the right code by profiling.</li>
+<li>Make and keep performance measurements along the way.</li>
+<li>Make the smallest changes possible at a time.</li>
+<li>Keep track of your code changes using Git.</li>
+<li>Always make sure your unit tests/your output is still valid.</li>
+</ul>
+<p>We’ll start with a simple example that can be found in the profile.py file:</p>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> sys
+<span class="im">import</span> time
+<span class="im">import</span> random
+
+random.seed(time.time())
+
+<span class="kw">def</span> gen_data(n):
+    numbers <span class="op">=</span> []
+    <span class="cf">for</span> i <span class="op">in</span> <span class="bu">range</span>(n):
+        numbers.append(random.random())
+    <span class="cf">return</span> numbers
+
+<span class="kw">def</span> sum_nexts(numbers):
+    sums <span class="op">=</span> []
+    <span class="cf">for</span> i <span class="op">in</span> <span class="bu">range</span>(<span class="bu">len</span>(numbers)):
+        <span class="cf">for</span> j <span class="op">in</span> <span class="bu">range</span>(i<span class="dv">+1</span>, <span class="bu">len</span>(numbers)):
+            <span class="cf">if</span> <span class="bu">len</span>(sums) <span class="op">&lt;</span> i<span class="dv">+1</span>:
+                sums.append(<span class="dv">0</span>.)
+            sums[i] <span class="op">=</span> sums[i] <span class="op">+</span> numbers[j]
+    <span class="cf">return</span> sums
+
+<span class="kw">def</span> main(n):
+    numbers <span class="op">=</span> gen_data(n)
+    sums <span class="op">=</span> sum_nexts(numbers)
+    <span class="cf">return</span> sums
+
+<span class="cf">if</span> <span class="va">__name__</span> <span class="op">==</span> <span class="st">&#39;__main__&#39;</span>:
+    <span class="cf">if</span> <span class="bu">len</span>(sys.argv) <span class="op">!=</span> <span class="dv">2</span>:
+        sys.stderr.write(<span class="st">&quot;Usage: </span><span class="sc">{0}</span><span class="st"> &lt;n&gt;</span><span class="ch">\n</span><span class="st">&quot;</span>.<span class="bu">format</span>(sys.argv[<span class="dv">0</span>]))
+        sys.exit(<span class="dv">1</span>)
+
+    n <span class="op">=</span> <span class="bu">int</span>(sys.argv[<span class="dv">1</span>])
+    main(n)</code></pre></div>
+<p>This small program takes a number n as input, generates n random elements in a list called numbers, and compute a list of n elements called sums, such as:</p>
+<div class="figure">
+<img src="img/sum_profiling.png" alt="Algorithm" />
+<p class="caption">Algorithm</p>
+</div>
+<p>The first thing we want to do is make note of the time it takes to run the program. We’ll start small, with a run of 10000 generated elements.</p>
+<pre class="input"><code>$ time python profile.py 10000</code></pre>
+<pre class="output"><code>real    0m9.787s
+user    0m9.745s
+sys 0m0.025s</code></pre>
+<p>We’re now ready to make our first profiling measurement to find our (possible) bottlenecks. For that, we’ll use the recommended Python profiler: <a href="https://docs.python.org/2/library/profile.html#module-cProfile">cProfile</a></p>
+<pre class="input"><code>$ python -m cProfile profile.py 10000</code></pre>
+<pre class="output"><code>         50045059 function calls in 15.072 seconds
+
+   Ordered by: standard name
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        1    0.000    0.000    0.000    0.000 __future__.py:48(&lt;module&gt;)
+        1    0.000    0.000    0.000    0.000 __future__.py:74(_Feature)
+        7    0.000    0.000    0.000    0.000 __future__.py:75(__init__)
+        6    0.000    0.000    0.000    0.000 hashlib.py:100(__get_openssl_constructor)
+        1    0.016    0.016    0.016    0.016 hashlib.py:56(&lt;module&gt;)
+        1    0.003    0.003   15.072   15.072 profile.py:1(&lt;module&gt;)
+        1   11.894   11.894   15.042   15.042 profile.py:13(sum_nexts)
+        1    0.000    0.000   15.046   15.046 profile.py:22(main)
+        1    0.003    0.003    0.004    0.004 profile.py:7(gen_data)
+        2    0.000    0.000    0.001    0.000 random.py:100(seed)
+        1    0.006    0.006    0.024    0.024 random.py:40(&lt;module&gt;)
+        1    0.000    0.000    0.000    0.000 random.py:655(WichmannHill)
+        1    0.000    0.000    0.000    0.000 random.py:72(Random)
+        1    0.000    0.000    0.000    0.000 random.py:805(SystemRandom)
+        1    0.000    0.000    0.001    0.001 random.py:91(__init__)
+        1    0.000    0.000    0.000    0.000 {_hashlib.openssl_md5}
+        1    0.000    0.000    0.000    0.000 {_hashlib.openssl_sha1}
+        1    0.000    0.000    0.000    0.000 {_hashlib.openssl_sha224}
+        1    0.000    0.000    0.000    0.000 {_hashlib.openssl_sha256}
+        1    0.000    0.000    0.000    0.000 {_hashlib.openssl_sha384}
+        1    0.000    0.000    0.000    0.000 {_hashlib.openssl_sha512}
+        1    0.000    0.000    0.000    0.000 {binascii.hexlify}
+        2    0.001    0.000    0.001    0.000 {function seed at 0x1018aa398}
+        6    0.000    0.000    0.000    0.000 {getattr}
+        6    0.000    0.000    0.000    0.000 {globals}
+ 50005002    2.881    0.000    2.881    0.000 {len}
+        1    0.000    0.000    0.000    0.000 {math.exp}
+        2    0.000    0.000    0.000    0.000 {math.log}
+        1    0.000    0.000    0.000    0.000 {math.sqrt}
+    19999    0.001    0.000    0.001    0.000 {method &#39;append&#39; of &#39;list&#39; objects}
+        1    0.000    0.000    0.000    0.000 {method &#39;disable&#39; of &#39;_lsprof.Profiler&#39; objects}
+    10000    0.001    0.000    0.001    0.000 {method &#39;random&#39; of &#39;_random.Random&#39; objects}
+        1    0.000    0.000    0.000    0.000 {method &#39;union&#39; of &#39;set&#39; objects}
+        1    0.000    0.000    0.000    0.000 {posix.urandom}
+    10002    0.266    0.000    0.266    0.000 {range}
+        1    0.000    0.000    0.000    0.000 {time.time}</code></pre>
+<p>You must remember that you can’t compare run timings from profiled and non-profiled code. Profiling incurs an overhead and will usually be a lot slower (about 50% here). The default output is not useful as entries are in no particular order. What we want most of the time is function calls sorted by their reverse cumulative time. This can be accomplished by the following:</p>
+<pre class="input"><code>$ python -m cProfile -o output.cprofile profile.py 10000
+$ python
+&gt;&gt;&gt; import pstats; s = pstats.Stats(&quot;output.cprofile&quot;)
+&gt;&gt;&gt; s.sort_stats(&#39;cumulative&#39;).print_stats(10)
+Wed Feb 10 10:28:35 2016    output.cprofile
+
+         50045059 function calls in 15.208 seconds
+
+   Ordered by: cumulative time
+   List reduced from 36 to 10 due to restriction &lt;10&gt;
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        1    0.001    0.001   15.208   15.208 profile.py:1(&lt;module&gt;)
+        1    0.000    0.000   15.202   15.202 profile.py:22(main)
+        1   12.022   12.022   15.197   15.197 profile.py:13(sum_nexts)
+ 50005002    2.910    0.000    2.910    0.000 {len}
+    10002    0.265    0.000    0.265    0.000 {range}
+        1    0.002    0.002    0.005    0.005 /Users/laurent/anaconda/envs/python2/lib/python2.7/random.py:40(&lt;module&gt;)
+        1    0.003    0.003    0.005    0.005 profile.py:7(gen_data)
+        1    0.002    0.002    0.002    0.002 /Users/laurent/anaconda/envs/python2/lib/python2.7/hashlib.py:56(&lt;module&gt;)
+    19999    0.001    0.000    0.001    0.000 {method &#39;append&#39; of &#39;list&#39; objects}
+    10000    0.001    0.000    0.001    0.000 {method &#39;random&#39; of &#39;_random.Random&#39; objects}</code></pre>
+<p>We also want to save the output to a (binary) file, which we do here using the -o option. That way, we can manipulate the stats data afterwards. We also used the print_stats function in this example, with the 10 parameter indicating that we want only the top 10 hits. It’s then possible to infer that most of the computation time, as expected, is taking place in the sum_nexts function. Beware that it might not always be so predictable and that you must profile before starting optimizing your code.</p>
+<p>Also note the addition of the -o option, to redirect output to a file. This is almost always what you want when profiling a real software as there will be a lot of functions to display.</p>
+<p>The problem when using cProfile is that it’s view is very high-level. We know where to start looking, but we don’t know the details of the function execution. To dig further, we need to use a line-based profiler called line_profiler. The line_profiler profiler needs manual instrumentation by adding a <span class="citation">@profile</span> decorator to functions we want to have a more detailed look at. This is mainly for performance reasons as profiling at line level the entire code would generaly be too costly.</p>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="at">@profile</span>
+<span class="kw">def</span> sum_nexts(numbers):
+    sums <span class="op">=</span> []
+    <span class="cf">for</span> i <span class="op">in</span> <span class="bu">range</span>(<span class="bu">len</span>(numbers)):
+        <span class="cf">for</span> j <span class="op">in</span> <span class="bu">range</span>(i<span class="dv">+1</span>, <span class="bu">len</span>(numbers)):
+            <span class="cf">if</span> <span class="bu">len</span>(sums) <span class="op">&lt;</span> i<span class="dv">+1</span>:
+                sums.append(<span class="dv">0</span>.)
+            sums[i] <span class="op">=</span> sums[i] <span class="op">+</span> numbers[j]
+    <span class="cf">return</span> sums</code></pre></div>
+<p>We can start the profiler and run our program using the following:</p>
+<pre class="input"><code>$ kernprof -l -v profile.py 10000</code></pre>
+<pre class="output"><code>Wrote profile results to profile.py.lprof
+Timer unit: 1e-06 s
+
+Total time: 31.2661 s
+File: profile.py
+Function: sum_nexts at line 13
+
+Line #      Hits         Time  Per Hit   % Time  Line Contents
+==============================================================
+    13                                           @profile
+    14                                           def sum_nexts(numbers):
+    15         1            3      3.0      0.0      sums = []
+    16      2939         1714      0.6      0.0      for i in range(len(numbers)):
+    17  25068105      8827075      0.4     28.2          for j in range(i+1, len(numbers)):
+    18  25065166     10874013      0.4     34.8              if len(sums) &lt; i+1:
+    19      2939         3654      1.2      0.0                  sums.append(0.)
+    20  25065166     11559601      0.5     37.0              sums[i] = sums[i] + numbers[j]
+    21                                               return sums</code></pre>
+<p>This makes it clear that a lot of the time is consumed by the (innocuously looking) if len(sums) &lt; i+1 statement. It is not slow per say, but called 25 million times, it becomes significant. A simple change we can make is to initialise our result list before with zeros. This change would look like this:</p>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="kw">def</span> sum_nexts(numbers):
+    sums <span class="op">=</span> [<span class="dv">0</span>.]<span class="op">*</span><span class="bu">len</span>(numbers)
+    <span class="cf">for</span> i <span class="op">in</span> <span class="bu">range</span>(<span class="bu">len</span>(numbers)):
+        <span class="cf">for</span> j <span class="op">in</span> <span class="bu">range</span>(i<span class="dv">+1</span>, <span class="bu">len</span>(numbers)):
+            sums[i] <span class="op">=</span> sums[i] <span class="op">+</span> numbers[j]
+    <span class="cf">return</span> sums</code></pre></div>
+<p>We removed the <span class="citation">@profile</span> decorator as we want to measure the impact of our change, by comparing to the original run time:</p>
+<pre class="input"><code>$ time python profile.py 10000</code></pre>
+<pre class="output"><code>real    0m5.433s
+user    0m5.410s
+sys 0m0.017s</code></pre>
+<p>So we have a 50% gain just doing this small modification. Let’s see if we can do better. We add the <span class="citation">@profile</span> back and run the line-level profiler again:</p>
+<pre class="intput"><code>$ kernprof -l -v profile.py 10000</code></pre>
+<pre class="output"><code>Wrote profile results to profile.py.lprof
+Timer unit: 1e-06 s
+
+Total time: 8.33541 s
+File: profile.py
+Function: sum_nexts at line 13
+
+Line #      Hits         Time  Per Hit   % Time  Line Contents
+==============================================================
+    13                                           @profile
+    14                                           def sum_nexts(numbers):
+    15         1           28     28.0      0.0      sums = [0.]*len(numbers)
+    16      1152          566      0.5      0.0      for i in range(len(numbers)):
+    17  10853166      3649381      0.3     43.8          for j in range(i+1, len(numbers)):
+    18  10852014      4685433      0.4     56.2              sums[i] = sums[i] + numbers[j]
+    19                                               return sums</code></pre>
+<p>That inner loop (j variable) sure seems to be a problem. Instead of iterating from i+1 to len(number)-1, we could use Python splicing to see if we get better performance.</p>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="kw">def</span> sum_nexts(numbers):
+    sums <span class="op">=</span> [<span class="dv">0</span>.]<span class="op">*</span><span class="bu">len</span>(numbers)
+    <span class="cf">for</span> i <span class="op">in</span> <span class="bu">range</span>(<span class="bu">len</span>(numbers)):
+        sums[i] <span class="op">=</span> <span class="bu">sum</span>(numbers[i<span class="dv">+1</span>:])
+    <span class="cf">return</span> sums</code></pre></div>
+<p>Having removed the <span class="citation">@profile</span> decorator again, we can test our hypothesis:</p>
+<pre class="input"><code>$ time python profile.py 10000</code></pre>
+<pre class="output"><code>real    0m0.472s
+user    0m0.460s
+sys 0m0.010s</code></pre>
+<p>That’s great! A 20x improvement since the beginning of the process. Let’s see what our line-based profiler has to say:</p>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="at">@profile</span>
+<span class="kw">def</span> sum_nexts(numbers):
+    sums <span class="op">=</span> [<span class="dv">0</span>.]<span class="op">*</span><span class="bu">len</span>(numbers)
+    <span class="cf">for</span> i <span class="op">in</span> <span class="bu">range</span>(<span class="bu">len</span>(numbers)):
+        sums[i] <span class="op">=</span> <span class="bu">sum</span>(numbers[i<span class="dv">+1</span>:])
+    <span class="cf">return</span> sums</code></pre></div>
+<pre class="input"><code>$ kernprof -l -v profile.py 10000</code></pre>
+<pre class="output"><code>Wrote profile results to profile.py.lprof
+Timer unit: 1e-06 s
+
+Total time: 0.4534 s
+File: profile.py
+Function: sum_nexts at line 13
+
+Line #      Hits         Time  Per Hit   % Time  Line Contents
+==============================================================
+    13                                           @profile
+    14                                           def sum_nexts(numbers):
+    15         1           27     27.0      0.0      sums = [0.]*len(numbers)
+    16     10001         3639      0.4      0.8      for i in range(len(numbers)):
+    17     10000       449733     45.0     99.2          sums[i] = sum(numbers[i+1:])
+    18         1            1      1.0      0.0      return sums</code></pre>
+<p>This is what we want to see: almost all run time is the actual computation (sum), which is great. But still, since we are working with lists, why not use Numpy arrays and see what we can achieve? Here is a modified version using Numpy arrays instead is lists:</p>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> numpy
+
+numpy.random.seed(<span class="bu">int</span>(time.time()))
+
+<span class="kw">def</span> gen_data(n):
+    <span class="cf">return</span> numpy.random.random(n)
+
+<span class="kw">def</span> sum_nexts(numbers):
+    sums <span class="op">=</span> numpy.zeros(<span class="bu">len</span>(numbers))
+    <span class="cf">for</span> i <span class="op">in</span> <span class="bu">range</span>(<span class="bu">len</span>(numbers)):
+        sums[i] <span class="op">=</span> <span class="bu">sum</span>(numbers[i<span class="dv">+1</span>:])
+    <span class="cf">return</span> sums</code></pre></div>
+<p>But running it yields an unexpected result. We are far worst than we were before those modifications:</p>
+<pre class="input"><code>$ time python profile.py 10000</code></pre>
+<pre class="output"><code>real    0m4.331s
+user    0m4.292s
+sys 0m0.034s</code></pre>
+<p>Why? Let’s ask our profiler:</p>
+<pre class="input"><code>$ kernprof -l -v profile.py 10000</code></pre>
+<pre class="output"><code>Wrote profile results to profile.py.lprof
+Timer unit: 1e-06 s
+
+Total time: 4.21296 s
+File: profile.py
+Function: sum_nexts at line 10
+
+Line #      Hits         Time  Per Hit   % Time  Line Contents
+==============================================================
+    10                                           @profile
+    11                                           def sum_nexts(numbers):
+    12         1           85     85.0      0.0      sums = numpy.zeros(len(numbers))
+    13     10001         4114      0.4      0.1      for i in range(len(numbers)):
+    14     10000      4208765    420.9     99.9          sums[i] = sum(numbers[i+1:])
+    15         1            0      0.0      0.0      return sums</code></pre>
+<p>This is again expected, we spend all of our time doing the sum. But why is it slower? The answer is that we are still using the Python built-in sum function and not it’s Numpy counterpart. That means the code goes back and forth between Python and C (Numpy). We can make the code execute longer in the Numpy library by using it’s own sum function:</p>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="kw">def</span> sum_nexts(numbers):
+    sums <span class="op">=</span> numpy.zeros(<span class="bu">len</span>(numbers))
+    <span class="cf">for</span> i <span class="op">in</span> <span class="bu">range</span>(<span class="bu">len</span>(numbers)):
+        sums[i] <span class="op">=</span> numbers[i<span class="dv">+1</span>:].<span class="bu">sum</span>()
+    <span class="cf">return</span> sums</code></pre></div>
+<pre class="input"><code>$ time python profile.py 10000</code></pre>
+<pre class="output"><code>real    0m0.145s
+user    0m0.112s
+sys 0m0.029s</code></pre>
+<p>So in the end, we could get about 65 times faster in a really short amount of time.</p>
+        </div>
+      </div>
+      </article>
+      <div class="footer">
+      </div>
+    </div>
+    <!-- Javascript placed at the end of the document so the pages load faster -->
+    <script src="http://software-carpentry.org/v5/js/jquery-1.9.1.min.js"></script>
+    <script src="css/bootstrap/bootstrap-js/bootstrap.js"></script>
+  </body>
+</html>
