@@ -21,7 +21,7 @@ Serial software is simple as it executes only one instruction at a time. More pr
 
 ##### Shared Memory
 
-This is when parallel software tasks communicate with each other using shared memory. This is mainly used with threads, altough processes can communicate with each other using shared memory if they are on the same machine.
+This is when parallel software tasks communicate with each other using shared memory. This is mainly used with threads, although processes can communicate with each other using shared memory if they are on the same machine.
 
 ##### Distributed Memory
 

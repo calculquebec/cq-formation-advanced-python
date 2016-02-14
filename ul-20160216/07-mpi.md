@@ -4,11 +4,11 @@ title: Advanced and Parallel Python
 subtitle: Scaling Beyond One Machine
 ---
 
-The techniques used with the multiprocessing Python module is a fast way to achieve good scaling. Although it is based on a distributed-memory (processes) pattern, it doesn't provide scaling beyond one physical machine. For that, you need something that provides transparent network communication between processes. There are a multitude of solutions for this kind of pattern when using Python but we'll stick with an old, but proven, method called MPI.
+The technique used with the multiprocessing Python module is a fast way to achieve good scaling. Although it is based on a distributed-memory (processes) pattern, it doesn't provide scaling beyond one physical machine. For that, you need something that provides transparent network communication between processes. There are a multitude of solutions for this kind of pattern when using Python but we'll stick with an old, but proven, method called MPI.
 
 ### MPI
 
-MPI stands for _Message Passing Interface_. As its name implies, it is a library for passing messages around between processes. A message can be anything from a simple digit to a giant Numpy matix. It is important to note that it is built to handle message passing between processes that may or may not be on the same machine. It means this method can scale to hundreds or thousands of compute cores. 
+MPI stands for _Message Passing Interface_. As its name implies, it is a library for passing messages around between processes. A message can be anything from a simple digit to a giant Numpy matix. It is important to note that it is built to handle message passing between processes that may or may not be on the same machine. It means this method can scale to hundreds or thousands of computing cores. 
 
 ### How Does It Work?
 
@@ -64,7 +64,7 @@ I am rank 1 of 4
 I am rank 2 of 4
 ~~~
 
-As expected, we have 4 ranks, numbered 0 to 3. The interesting thing to notice is that the output is not sequential. This is the first thing to remember: those processes are really independent processes. They do their own thing, whenever they are ready, unless we synchonise them in some way, either explicitly or by adding communication betwen them.
+As expected, we have 4 ranks, numbered 0 to 3. The interesting thing to notice is that the output is not sequential. This is the first thing to remember: those processes are really independent processes. They do their own thing, whenever they are ready, unless we synchronize them in some way, either explicitly or by adding communication between them.
 
 The most important aspect of MPI programming is, as it was with the multiprocessing module, is to take care to split our processing equitably between processes. Since we will start with our multiprocessing solution from the last topic, we will use the same interval-splitting and go straight to communication.
 
@@ -99,14 +99,14 @@ In MPI, there are two communication concepts:
 1. Point to Point: used for exchanging data between two processes.
 2. Collective Operations: used for exchanging data between any number of processes, in one operation.
 
-We will re-implement the previous example, in turn, using both communication pattern.
+We will re-implement the previous example, in turn, using both communication patterns.
 
 #### Point to Point
 
 This mode of communication implies that one process can talk to only one other process at a time. One approach we could use in our implementation is to elect a process as our master process, and make it compute our intervals and send it to each other processes, one at a time. We will use our rank 0 for this task.
 
-*** add not ***
-In most MPI program, rank 0 is doing more things like initialisation or data distribution. Keep in mind that this is a design decision and that rank 0 is exactly the same as other processes. It just happens that rank 0 will always exist (since it's the first process) so people tend to choose that one for this coordinating role.
+*** add note ***
+In most MPI program, rank 0 is doing more things like initialization or data distribution. Keep in mind that this is a design decision and that rank 0 is exactly the same as other processes. It just happens that rank 0 will always exist (since it's the first process) so people tend to choose that one for this coordinating role.
 
 The first thing we will add is the MPI library import:
 
@@ -149,7 +149,7 @@ Notice the two point to point communication functions used:
 
 Note that those are blocking operations: it means if rank 0 forgets to send data to a rank, this rank will be blocked on the comm.recv call forever.
 
-Once everyone has its share of the input data to process, here their own interval, we can process it using the approx_pi function, without modifiyng it:
+Once everyone has its share of the input data to process, here their own interval, we can process it using the approx_pi function, without modifying it:
 
 ~~~ {.python}
     partial_pi = approx_pi(myInterval)
@@ -175,7 +175,7 @@ One last thing to note: you usually want to output results, either on the termin
         print("Time = %.16f sec\n"%(t2 - t1))
 ~~~
 
-Also remember that only rank 0 has done this summing so only rank 0 knowns the final pi value. Let's recap everything at the same place:
+Also remember that only rank 0 has done this summing so only rank 0 known the final pi value. Let's recap everything at the same place:
 
 ~~~ {.python}
 from mpi4py import MPI
@@ -245,13 +245,13 @@ We get about the same run time as with our multiprocessing example, which is goo
 
 #### Collective Operations
 
-Collective operations implies that multiple processes coordinate for communicating. There are a handful of patterns that can be used:
+Collective operations imply that multiple processes coordinate for communicating. There are a handful of patterns that can be used:
 
 * Broadcasting: used for sending the same data from one process to one or more processes.
-* Scattering: used for sending chunk of data to multiple processes.
+* Scattering: used for sending chunks of data to multiple processes.
 * Gathering: used for collecting chunks of data from multiple processes to one process.
 
-Our intervals distribution sure looks like scattering so we'll try to simplify our code a little using this collective operation. This is the sending part of our previous example:
+Our interval distribution sure looks like scattering so we'll try to simplify our code a little using this collective operation. This is the sending part of our previous example:
 
 ~~~ {.python}
     if rank == 0:
@@ -262,7 +262,7 @@ Our intervals distribution sure looks like scattering so we'll try to simplify o
         myInterval = comm.recv(source=0)
 ~~~
 
-It could be rewriten using a scatter collective operation like this:
+It could be rewritten using a scatter collective operation like this:
 
 ~~~ {.python}
     myInterval = comm.scatter(intervals, root=0)
@@ -310,7 +310,7 @@ This could be done efficiently, on many processes, using a reduction operation:
     pi = comm.reduce(partial_pi, op=MPI.SUM, root=0)
 ~~~
 
-This statement basicaly means: sum all partial_pi variables and make the result available on rank 0. Running it yields the same result, in about the same run time.
+This statement basically means: sum all partial_pi variables and make the result available on rank 0. Running it yields the same result, in about the same run time.
 
 ~~~ {.input}
 $ mpirun -np 4 python approx_pi_mpi.py 100000000

@@ -47,7 +47,7 @@ PI is approximately 3.1415926435893260, Error is 0.0000000100004671
 Time = 0.4207670000000000 sec
 ~~~
 
-Be aware that your measurements can be significatly different on different computers. Now for it's Python counterpart:
+Be aware that your measurements can be significantly different on different computers. Now for its Python counterpart:
 
 ~~~ {.input}
 $ python approx_pi.py 100000000
@@ -61,9 +61,9 @@ You will usually notice that the C version is 80 to 100 times faster than the Py
 
 ### What is Python?
 
-Let's take a step back and awnser that question: What is Python?
+Let's take a step back and answer that question: What is Python?
 
-It is self-described as "Python is a programming language that lets you work quickly and integrate systems more effectively", which is quite accurate. From a development standpoint, designing, writing and deploying Python code is usually faster than the equivalent C code. As we have seen, the only problem is that you have to make some kind of effort to speed it up.
+It is self-described as "Python is a programing language that lets you work quickly and integrate systems more effectively", which is quite accurate. From a development standpoint, designing, writing and deploying Python code is usually faster than the equivalent C code. As we have seen, the only problem is that you have to make some kind of effort to speed it up.
 
 The first thing to know is that when talking about Python, most people are really talking about [CPython](https://python.org). CPython is the reference implementation of the language but there are others. From the words of its authors, CPython is not always the fastest implementation. Let's try using one of them, [PyPy](http://pypy.org/), to see how they compare.
 
@@ -88,7 +88,7 @@ Let's return to a part the above statement: "integrate systems more effectively"
 
 Python should really be seen as the glue keeping together multiple components (libraries). And since pure Python is usually pretty slow, compared to C, that means you want to integrate components written in C, and spend most of your computation time inside those libraries, not in your Python code.
 
-Let's have a go at optimizing our code using a widely-used C-based library, Numpy. Here's a simple version that can be found in the approx_pi_numpy.py file:
+Let's have a go at optimizing our code using a widely used C-based library, Numpy. Here's a simple version that can be found in the approx_pi_numpy.py file:
 
 ~~~ {.python}
 def approx_pi(intervals):

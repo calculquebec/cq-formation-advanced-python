@@ -14,7 +14,7 @@ Reference: [https://www.python.org/](https://www.python.org/)
 
 ### Numpy
 
-The (most) fundamental Python package of scientific Python programming. Maily known for it's fast N-dimensional array implementation. It is the basis of most other scientific libraries.
+The (most) fundamental Python package of scientific Python programming. Mainly known for its fast N-dimensional array implementation. It is the basis of most other scientific libraries.
 
 Reference: [http://www.numpy.org/](http://www.numpy.org/)
 
@@ -32,7 +32,7 @@ Reference: (http://ipython.org/notebook.html)[http://ipython.org/notebook.html]
 
 ### Matplotlib
 
-Widely used plotting library, mostly used for visualisation and data analytics.
+Widely used plotting library, mostly used for visualization and data analytics.
 
 Reference: [http://matplotlib.org/](http://matplotlib.org/)
 
