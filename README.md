@@ -22,3 +22,5 @@ git commit
 git push
 git subtree push --prefix reference git@github.com:calculquebec/cq-formation-advanced-python.git gh-pages
 ~~~
+
+Web site will be available at http://calculquebec.github.io/cq-formation-advanced-python/<new dir>/
