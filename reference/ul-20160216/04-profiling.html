@@ -148,7 +148,7 @@ Wed Feb 10 10:28:35 2016    output.cprofile
     10000    0.001    0.000    0.001    0.000 {method &#39;random&#39; of &#39;_random.Random&#39; objects}</code></pre>
 <p>We also want to save the output to a (binary) file, which we do here using the -o option. That way, we can manipulate the stats data afterwards. We also used the print_stats function in this example, with the 10 parameter indicating that we want only the top 10 hits. It’s then possible to infer that most of the computation time, as expected, is taking place in the sum_nexts function. Beware that it might not always be so predictable and that you must profile before starting optimizing your code.</p>
 <p>Also note the addition of the -o option, to redirect output to a file. This is almost always what you want when profiling a real software as there will be a lot of functions to display.</p>
-<p>The problem when using cProfile is that it’s view is very high-level. We know where to start looking, but we don’t know the details of the function execution. To dig further, we need to use a line-based profiler called line_profiler. The line_profiler profiler needs manual instrumentation by adding a <span class="citation">@profile</span> decorator to functions we want to have a more detailed look at. This is mainly for performance reasons as profiling at line level the entire code would generaly be too costly.</p>
+<p>The problem when using cProfile is that it’s view is very high-level. We know where to start looking, but we don’t know the details of the function execution. To dig further, we need to use a line-based profiler called line_profiler. The line_profiler profiler needs manual instrumentation by adding a <span class="citation">@profile</span> decorator to functions we want to have a more detailed look at. This is mainly for performance reasons as profiling at line level the entire code would generally be too costly.</p>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="at">@profile</span>
 <span class="kw">def</span> sum_nexts(numbers):
     sums <span class="op">=</span> []
@@ -178,7 +178,7 @@ Line #      Hits         Time  Per Hit   % Time  Line Contents
     19      2939         3654      1.2      0.0                  sums.append(0.)
     20  25065166     11559601      0.5     37.0              sums[i] = sums[i] + numbers[j]
     21                                               return sums</code></pre>
-<p>This makes it clear that a lot of the time is consumed by the (innocuously looking) if len(sums) &lt; i+1 statement. It is not slow per say, but called 25 million times, it becomes significant. A simple change we can make is to initialise our result list before with zeros. This change would look like this:</p>
+<p>This makes it clear that a lot of the time is consumed by the (innocuously looking) if len(sums) &lt; i+1 statement. It is not slow per say, but called 25 million times, it becomes significant. A simple change we can make is to initialize our result list before with zeros. This change would look like this:</p>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="kw">def</span> sum_nexts(numbers):
     sums <span class="op">=</span> [<span class="dv">0</span>.]<span class="op">*</span><span class="bu">len</span>(numbers)
     <span class="cf">for</span> i <span class="op">in</span> <span class="bu">range</span>(<span class="bu">len</span>(numbers)):
@@ -255,7 +255,7 @@ numpy.random.seed(<span class="bu">int</span>(time.time()))
     <span class="cf">for</span> i <span class="op">in</span> <span class="bu">range</span>(<span class="bu">len</span>(numbers)):
         sums[i] <span class="op">=</span> <span class="bu">sum</span>(numbers[i<span class="dv">+1</span>:])
     <span class="cf">return</span> sums</code></pre></div>
-<p>But running it yields an unexpected result. We are far worst than we were before those modifications:</p>
+<p>But running it yields an unexpected result. We are far worse than we were before those modifications:</p>
 <pre class="input"><code>$ time python profile.py 10000</code></pre>
 <pre class="output"><code>real    0m4.331s
 user    0m4.292s
@@ -277,7 +277,7 @@ Line #      Hits         Time  Per Hit   % Time  Line Contents
     13     10001         4114      0.4      0.1      for i in range(len(numbers)):
     14     10000      4208765    420.9     99.9          sums[i] = sum(numbers[i+1:])
     15         1            0      0.0      0.0      return sums</code></pre>
-<p>This is again expected, we spend all of our time doing the sum. But why is it slower? The answer is that we are still using the Python built-in sum function and not it’s Numpy counterpart. That means the code goes back and forth between Python and C (Numpy). We can make the code execute longer in the Numpy library by using it’s own sum function:</p>
+<p>This is again expected, we spend all of our time doing the sum. But why is it slower? The answer is that we are still using the Python built-in sum function and not it’s Numpy counterpart. That means the code goes back and forth between Python and C (Numpy). We can make the code execute longer in the Numpy library by using its own sum function:</p>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="kw">def</span> sum_nexts(numbers):
     sums <span class="op">=</span> numpy.zeros(<span class="bu">len</span>(numbers))
     <span class="cf">for</span> i <span class="op">in</span> <span class="bu">range</span>(<span class="bu">len</span>(numbers)):

@@ -26,9 +26,9 @@
         <div class="col-md-10 col-md-offset-1">
                     <a href="index.html"><h1 class="title">Advanced and Parallel Python</h1></a>
           <h2 class="subtitle">Scaling Beyond One Machine</h2>
-          <p>The techniques used with the multiprocessing Python module is a fast way to achieve good scaling. Although it is based on a distributed-memory (processes) pattern, it doesn’t provide scaling beyond one physical machine. For that, you need something that provides transparent network communication between processes. There are a multitude of solutions for this kind of pattern when using Python but we’ll stick with an old, but proven, method called MPI.</p>
+          <p>The technique used with the multiprocessing Python module is a fast way to achieve good scaling. Although it is based on a distributed-memory (processes) pattern, it doesn’t provide scaling beyond one physical machine. For that, you need something that provides transparent network communication between processes. There are a multitude of solutions for this kind of pattern when using Python but we’ll stick with an old, but proven, method called MPI.</p>
 <h3 id="mpi">MPI</h3>
-<p>MPI stands for <em>Message Passing Interface</em>. As its name implies, it is a library for passing messages around between processes. A message can be anything from a simple digit to a giant Numpy matix. It is important to note that it is built to handle message passing between processes that may or may not be on the same machine. It means this method can scale to hundreds or thousands of compute cores.</p>
+<p>MPI stands for <em>Message Passing Interface</em>. As its name implies, it is a library for passing messages around between processes. A message can be anything from a simple digit to a giant Numpy matix. It is important to note that it is built to handle message passing between processes that may or may not be on the same machine. It means this method can scale to hundreds or thousands of computing cores.</p>
 <h3 id="how-does-it-work">How Does It Work?</h3>
 <p>Since it is an interface, many libraries can implement it. We are going to focus on <a href="https://www.open-mpi.org/">OpenMPI</a> since it is open source and is widely available on many clusters.</p>
 <p>Usually, when you run a Python program, you will use something like this:</p>
@@ -55,7 +55,7 @@ size <span class="op">=</span> comm.Get_size()
 I am rank 0 of 4
 I am rank 1 of 4
 I am rank 2 of 4</code></pre>
-<p>As expected, we have 4 ranks, numbered 0 to 3. The interesting thing to notice is that the output is not sequential. This is the first thing to remember: those processes are really independent processes. They do their own thing, whenever they are ready, unless we synchonise them in some way, either explicitly or by adding communication betwen them.</p>
+<p>As expected, we have 4 ranks, numbered 0 to 3. The interesting thing to notice is that the output is not sequential. This is the first thing to remember: those processes are really independent processes. They do their own thing, whenever they are ready, unless we synchronize them in some way, either explicitly or by adding communication between them.</p>
 <p>The most important aspect of MPI programming is, as it was with the multiprocessing module, is to take care to split our processing equitably between processes. Since we will start with our multiprocessing solution from the last topic, we will use the same interval-splitting and go straight to communication.</p>
 <p>Let’s have a look back at our previous (simplified) multiprocessing solution:</p>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> sys
@@ -83,10 +83,10 @@ pi <span class="op">=</span> <span class="bu">sum</span>(p.<span class="bu">map<
 <li>Point to Point: used for exchanging data between two processes.</li>
 <li>Collective Operations: used for exchanging data between any number of processes, in one operation.</li>
 </ol>
-<p>We will re-implement the previous example, in turn, using both communication pattern.</p>
+<p>We will re-implement the previous example, in turn, using both communication patterns.</p>
 <h4 id="point-to-point">Point to Point</h4>
 <p>This mode of communication implies that one process can talk to only one other process at a time. One approach we could use in our implementation is to elect a process as our master process, and make it compute our intervals and send it to each other processes, one at a time. We will use our rank 0 for this task.</p>
-<p>*** add not *** In most MPI program, rank 0 is doing more things like initialisation or data distribution. Keep in mind that this is a design decision and that rank 0 is exactly the same as other processes. It just happens that rank 0 will always exist (since it’s the first process) so people tend to choose that one for this coordinating role.</p>
+<p>*** add note *** In most MPI program, rank 0 is doing more things like initialization or data distribution. Keep in mind that this is a design decision and that rank 0 is exactly the same as other processes. It just happens that rank 0 will always exist (since it’s the first process) so people tend to choose that one for this coordinating role.</p>
 <p>The first thing we will add is the MPI library import:</p>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="im">from</span> mpi4py <span class="im">import</span> MPI</code></pre></div>
 <p>In our previous example, we had split our inputs into 4 intervals, assuming 4 processes. We want to become more generic here and plan for any number of processes:</p>
@@ -113,7 +113,7 @@ pi <span class="op">=</span> <span class="bu">sum</span>(p.<span class="bu">map<
 <li>comm.recv: it is used to receive, synchronously, data from a specific rank. Here we want to receive data from rank 0 (source=0).</li>
 </ol>
 <p>Note that those are blocking operations: it means if rank 0 forgets to send data to a rank, this rank will be blocked on the comm.recv call forever.</p>
-<p>Once everyone has its share of the input data to process, here their own interval, we can process it using the approx_pi function, without modifiyng it:</p>
+<p>Once everyone has its share of the input data to process, here their own interval, we can process it using the approx_pi function, without modifying it:</p>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">    partial_pi <span class="op">=</span> approx_pi(myInterval)</code></pre></div>
 <p>Once we have the partial sums, we need to get the result back to rank 0, and sum them all:</p>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">    <span class="cf">if</span> rank <span class="op">==</span> <span class="dv">0</span>:
@@ -127,7 +127,7 @@ pi <span class="op">=</span> <span class="bu">sum</span>(p.<span class="bu">map<
         t2 <span class="op">=</span> time.time()
         <span class="bu">print</span>(<span class="st">&quot;PI is approximately </span><span class="sc">%.16f</span><span class="st">, Error is </span><span class="sc">%.16f</span><span class="st">&quot;</span><span class="op">%</span>(pi, <span class="bu">abs</span>(pi <span class="op">-</span> math.pi)))
         <span class="bu">print</span>(<span class="st">&quot;Time = </span><span class="sc">%.16f</span><span class="st"> sec</span><span class="ch">\n</span><span class="st">&quot;</span><span class="op">%</span>(t2 <span class="op">-</span> t1))</code></pre></div>
-<p>Also remember that only rank 0 has done this summing so only rank 0 knowns the final pi value. Let’s recap everything at the same place:</p>
+<p>Also remember that only rank 0 has done this summing so only rank 0 known the final pi value. Let’s recap everything at the same place:</p>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="im">from</span> mpi4py <span class="im">import</span> MPI
 
 <span class="im">import</span> sys
@@ -186,20 +186,20 @@ PI is approximately 3.1415926435898172, Error is 0.0000000099999760
 Time = 9.0873570442199707 sec</code></pre>
 <p>We get about the same run time as with our multiprocessing example, which is good. The code is arguably more complex, but keep in mind that now, we can scale beyond one single machine without changing a single line of code, which can be really useful, or even mandatory, to solve difficult problems.</p>
 <h4 id="collective-operations">Collective Operations</h4>
-<p>Collective operations implies that multiple processes coordinate for communicating. There are a handful of patterns that can be used:</p>
+<p>Collective operations imply that multiple processes coordinate for communicating. There are a handful of patterns that can be used:</p>
 <ul>
 <li>Broadcasting: used for sending the same data from one process to one or more processes.</li>
-<li>Scattering: used for sending chunk of data to multiple processes.</li>
+<li>Scattering: used for sending chunks of data to multiple processes.</li>
 <li>Gathering: used for collecting chunks of data from multiple processes to one process.</li>
 </ul>
-<p>Our intervals distribution sure looks like scattering so we’ll try to simplify our code a little using this collective operation. This is the sending part of our previous example:</p>
+<p>Our interval distribution sure looks like scattering so we’ll try to simplify our code a little using this collective operation. This is the sending part of our previous example:</p>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">    <span class="cf">if</span> rank <span class="op">==</span> <span class="dv">0</span>:
         myInterval <span class="op">=</span> intervals[<span class="dv">0</span>]
         <span class="cf">for</span> otherRank <span class="op">in</span> <span class="bu">range</span>(<span class="dv">1</span>, size):
             comm.send(intervals[otherRank], dest<span class="op">=</span>otherRank)
     <span class="cf">else</span>:
         myInterval <span class="op">=</span> comm.recv(source<span class="op">=</span><span class="dv">0</span>)</code></pre></div>
-<p>It could be rewriten using a scatter collective operation like this:</p>
+<p>It could be rewritten using a scatter collective operation like this:</p>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">    myInterval <span class="op">=</span> comm.scatter(intervals, root<span class="op">=</span><span class="dv">0</span>)</code></pre></div>
 <p>The <em>intervals</em> list must have the same number of elements as there are processes in the communicator used, which is the case here.</p>
 <p>At the end, the reverse operation looks like a gathering. We want to get all data back to rank 0 so it can sum the partial sums. This is the code we had previously:</p>
@@ -223,7 +223,7 @@ Time = 9.0873570442199707 sec</code></pre>
         pi <span class="op">=</span> <span class="bu">sum</span>(partial_sums)</code></pre></div>
 <p>This could be done efficiently, on many processes, using a reduction operation:</p>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">    pi <span class="op">=</span> comm.<span class="bu">reduce</span>(partial_pi, op<span class="op">=</span>MPI.SUM, root<span class="op">=</span><span class="dv">0</span>)</code></pre></div>
-<p>This statement basicaly means: sum all partial_pi variables and make the result available on rank 0. Running it yields the same result, in about the same run time.</p>
+<p>This statement basically means: sum all partial_pi variables and make the result available on rank 0. Running it yields the same result, in about the same run time.</p>
 <pre class="input"><code>$ mpirun -np 4 python approx_pi_mpi.py 100000000</code></pre>
 <pre class="output"><code>PI is approximately 3.1415926435898172, Error is 0.0000000099999760
 Time = 8.9309309005737305 sec</code></pre>
