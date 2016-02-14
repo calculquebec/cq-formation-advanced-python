@@ -13,7 +13,7 @@ The goal of this workshop is to give you the ability to take existing Python cod
 2. [Why (and What) is Python?](02-interpreter.html)
 3. [Compiling Python Code](03-compiling.html)
 4. [Finding Bottlenecks](04-profiling.html)
-5. [Parallel Programming Concepts](05-parallel-programming.html)
+5. [Parallel Programming Concepts](05-parallel-concepts.html)
 6. [Using Multiple Cores](06-multiprocessing.html)
 7. [Scaling Beyond One Machine](07-mpi.html)
 
