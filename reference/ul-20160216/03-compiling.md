@@ -4,7 +4,7 @@ title: Advanced and Parallel Python
 subtitle: Compiling Python Code
 ---
 
-While is might seem unintuitive to talk about compiling an interpreted language, it is often an easy and overlooked solution to speeding up Python programs. The advantage of being an interpreted language is that most Python compilers do [Just-In-Time compilation](https://en.wikipedia.org/wiki/Just-in-time_compilation), not unlike what [PyPy](http://pypy.org) is doing.
+While it might seem un-intuitive to talk about compiling an interpreted language, it is often an easy and overlooked solution to speeding up Python programs. The advantage of being an interpreted language is that most Python compilers do [Just-In-Time compilation](https://en.wikipedia.org/wiki/Just-in-time_compilation), not unlike what [PyPy](http://pypy.org) is doing.
 
 We'll first have a look at the Cython (not to be confused with CPython). It has both pre-compilation and just-in-time compilation modes. We will use the former for now as it will help us understand what it's doing and make better use of it.
 
@@ -43,7 +43,7 @@ And to proceed with the compilation:
 $ python setup_cython.py build_ext --inplace
 ~~~
 
-After some compilation steps involving your C compiler (GCC, clang, icc, ...), you will get, on Unix platforms, a shared library named approx_pi_cython.so. This is very differrent than what we did with PyPy in that this is not immediatly executable: it's only a library exposing functions so our main timing code, cannot be executed. To use our newly compiled function, we need to import it in a script or in a Python interpreter:
+After some compilation steps involving your C compiler (GCC, clang, icc, ...), you will get, on Unix platforms, a shared library named approx_pi_cython.so. This is very different than what we did with PyPy in that this is not immediately executable: it's only a library exposing functions so our main timing code cannot be executed. To use our newly compiled function, we need to import it in a script or in a Python interpreter:
 
 ~~~ {.input}
 $ ipython
@@ -70,7 +70,7 @@ As you can see, we are not even twice as fast as our original Python code under 
   __pyx_v_pi = __pyx_float_0_0;
 ~~~
 
-This is only a small snippet of the entire code but it's enough to understand what's going on.
+This is only a snippet of the entire code but it's enough to understand what's going on.
 First, you'll notice you have a C comment with an arrow pointing to the line the next code refers to. This is helpful to know how a line or chunk of code has been translated to C.
 Second, we notice that our pi variable is not a double native type, as we would expect, but a Python object. That means every interaction with that variable cannot be native C code and must go back inside the Python VM, as seen in this snippet:
 
@@ -124,7 +124,7 @@ We are now on par with the PyPy interpreter. One could argue that using PyPy is 
     __pyx_t_3 = (4 - (8 * __Pyx_mod_long(__pyx_v_i, 2)));
 ~~~
 
-Everything looks almost right. Our variables are now native types (double and int). The only thing left is this call to __Pyx_mod_long instead of the (way faster) C modulo operator (%). This is done mainly because of different behaviour when using negative numbers. In C, -1%10 == -1 and in Python, -1%10 == 9. Since we know we won't have any negative numbers going from 0 to intervals-1, we can safely tell the Cython compiler to use the native modulo operator:
+Everything looks almost right. Our variables are now native types (double and int). The only thing left is this call to __Pyx_mod_long instead of the (way faster) C modulo operator (%). This is done mainly because of different behavior when using negative numbers. In C, -1%10 == -1 and in Python, -1%10 == 9. Since we know we won't have any negative numbers going from 0 to intervals-1, we can safely tell the Cython compiler to use the native modulo operator:
 
 ~~~ {.python}
 #cython:cdivision=True

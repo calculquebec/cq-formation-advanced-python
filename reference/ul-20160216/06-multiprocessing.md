@@ -4,9 +4,9 @@ title: Advanced and Parallel Python
 subtitle: Using Multiple Cores
 ---
 
-The reference Python implementation, CPython, only support the execution of one thread at a time. On modern hardware, we can leverage the power of two, four or even more cores, on one machime, using the multiprocessing module. Be aware that there is also a threading module, which lets you use a shared-memory model, but won't let you take full advantage of the underlying hardware. See [GIL description](https://wiki.python.org/moin/GlobalInterpreterLock) for more information.
+The reference Python implementation, CPython, only support the execution of one thread at a time. On modern hardware, we can leverage the power of two, four or even more cores, on one machine, using the multiprocessing module. Be aware that there is also a threading module, which lets you use a shared-memory model, but won't let you take full advantage of the underlying hardware. See [GIL description](https://wiki.python.org/moin/GlobalInterpreterLock) for more information.
 
-When using the multiprocessing module, we use a distributed memory model. That is, a variable, in two different processes, will each have their own values. Communication and synchronisation must then be explicit. As with anything Python, the multiprocessing module makes this simple.
+When using the multiprocessing module, we use a distributed memory model. That is, a variable, in two different processes, will each have their own values. Communication and synchronization must then be explicit. As with anything Python, the multiprocessing module makes this simple.
 
 We'll start back with the first (non-optimized) example for PI approximation:
 
@@ -98,7 +98,7 @@ Once we have our input data split up correctly, we can try to apply our new func
     pi = sum(map(approx_pi, intervals))
 ~~~
 
-This will apply the approx_pi on each interval, suming the partial sums at the end. This kind of operation is called a reduction and is a fundamental concept in parallel computing. Running it again should yield the right result, in about the same run time as before:
+This will apply the approx_pi on each interval, summing the partial sums at the end. This kind of operation is called a reduction and is a fundamental concept in parallel computing. Running it again should yield the right result, in about the same run time as before:
 
 ~~~ {.input}
 $ python approx_pi_multiprocessing.py 100000000
@@ -144,7 +144,7 @@ You'll notice that the answer is right, the error margin is also good, but that 
     t2 = time.time()
 ~~~
 
-Which yields the following run tim:
+Which yields the following run time:
 
 ~~~ {.input}
 $ python approx_pi_multiprocessing.py 100000000

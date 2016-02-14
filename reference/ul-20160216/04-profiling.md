@@ -148,7 +148,7 @@ We also want to save the output to a (binary) file, which we do here using the -
 
 Also note the addition of the -o option, to redirect output to a file. This is almost always what you want when profiling a real software as there will be a lot of functions to display.
 
-The problem when using cProfile is that it's view is very high-level. We know where to start looking, but we don't know the details of the function execution. To dig further, we need to use a line-based profiler called line_profiler. The line_profiler profiler needs manual instrumentation by adding a @profile decorator to functions we want to have a more detailed look at. This is mainly for performance reasons as profiling at line level the entire code would generaly be too costly.
+The problem when using cProfile is that it's view is very high-level. We know where to start looking, but we don't know the details of the function execution. To dig further, we need to use a line-based profiler called line_profiler. The line_profiler profiler needs manual instrumentation by adding a @profile decorator to functions we want to have a more detailed look at. This is mainly for performance reasons as profiling at line level the entire code would generally be too costly.
 
 ~~~ {.python}
 @profile
@@ -188,7 +188,7 @@ Line #      Hits         Time  Per Hit   % Time  Line Contents
     21                                               return sums
 ~~~
 
-This makes it clear that a lot of the time is consumed by the (innocuously looking) if len(sums) < i+1 statement. It is not slow per say, but called 25 million times, it becomes significant. A simple change we can make is to initialise our result list before with zeros. This change would look like this:
+This makes it clear that a lot of the time is consumed by the (innocuously looking) if len(sums) < i+1 statement. It is not slow per say, but called 25 million times, it becomes significant. A simple change we can make is to initialize our result list before with zeros. This change would look like this:
 
 ~~~ {.python}
 def sum_nexts(numbers):
@@ -304,7 +304,7 @@ def sum_nexts(numbers):
     return sums
 ~~~
 
-But running it yields an unexpected result. We are far worst than we were before those modifications:
+But running it yields an unexpected result. We are far worse than we were before those modifications:
 
 ~~~ {.input}
 $ time python profile.py 10000
@@ -338,7 +338,7 @@ Line #      Hits         Time  Per Hit   % Time  Line Contents
     15         1            0      0.0      0.0      return sums
 ~~~
 
-This is again expected, we spend all of our time doing the sum. But why is it slower? The answer is that we are still using the Python built-in sum function and not it's Numpy counterpart. That means the code goes back and forth between Python and C (Numpy). We can make the code execute longer in the Numpy library by using it's own sum function:
+This is again expected, we spend all of our time doing the sum. But why is it slower? The answer is that we are still using the Python built-in sum function and not it's Numpy counterpart. That means the code goes back and forth between Python and C (Numpy). We can make the code execute longer in the Numpy library by using its own sum function:
 
 ~~~ {.python}
 def sum_nexts(numbers):
