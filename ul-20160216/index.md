@@ -22,4 +22,3 @@ The goal of this workshop is to give you the ability to take existing Python cod
 Workshop developed by <a href="mailto:laurent.duchesne@calculquebec.ca">Laurent Duchesne</a>, originaly based on McGill's <a href="https://github.com/calculquebec/cq-formation-advanced-python/tree/mcgill">Advanced Parallel Python</a> workshop.
 
 Reference web site build using tools provided by <a href="http://software-carpentry.org/">Software Carpentry</a>.
-test
