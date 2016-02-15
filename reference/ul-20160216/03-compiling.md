@@ -183,6 +183,8 @@ In [3]: %timeit approx_pi(100000000)
 Another option for JIT compiling is the [Numba project](http://numba.pydata.org/). The Numba compiler is provided by Continuum Analytics, which also distribute the Anaconda Python distribution. In its simpler form, you only need to add the @jit annotation to the code you want to speed up:
  
 ~~~ {.python}
+from numba import jit
+
 @jit
 def approx_pi(intervals):
     pi = 0.0

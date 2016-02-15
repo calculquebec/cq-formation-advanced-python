@@ -132,7 +132,9 @@ In [3]: %timeit approx_pi(100000000)
 </section>
 <h3 id="numba">Numba</h3>
 <p>Another option for JIT compiling is the <a href="http://numba.pydata.org/">Numba project</a>. The Numba compiler is provided by Continuum Analytics, which also distribute the Anaconda Python distribution. In its simpler form, you only need to add the <span class="citation">@jit</span> annotation to the code you want to speed up:</p>
-<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="at">@jit</span>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="im">from</span> numba <span class="im">import</span> jit
+
+<span class="at">@jit</span>
 <span class="kw">def</span> approx_pi(intervals):
     pi <span class="op">=</span> <span class="fl">0.0</span>
     <span class="cf">for</span> i <span class="op">in</span> <span class="bu">range</span>(intervals):
