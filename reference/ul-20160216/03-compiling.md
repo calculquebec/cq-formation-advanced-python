@@ -4,7 +4,7 @@ title: Advanced and Parallel Python
 subtitle: Compiling Python Code
 ---
 
-While it might seem un-intuitive to talk about compiling an interpreted language, it is often an easy and overlooked solution to speeding up Python programs. The advantage of being an interpreted language is that most Python compilers do [Just-In-Time compilation](https://en.wikipedia.org/wiki/Just-in-time_compilation), not unlike what [PyPy](http://pypy.org) is doing.
+While it might seem unintuitive to talk about compiling an interpreted language, it is often an easy and overlooked solution to speeding up Python programs. The advantage of being an interpreted language is that most Python compilers do [Just-In-Time compilation](https://en.wikipedia.org/wiki/Just-in-time_compilation), not unlike what [PyPy](http://pypy.org) is doing.
 
 We'll first have a look at the Cython (not to be confused with CPython). It has both pre-compilation and just-in-time compilation modes. We will use the former for now as it will help us understand what it's doing and make better use of it.
 
