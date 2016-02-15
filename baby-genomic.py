@@ -43,7 +43,7 @@ def main():
 
     np.random.seed(1234)
 
-    for i in xrange(8):
+    for i in xrange(16):
         seqA = ''.join([base[np.random.randint(0, 4)] for i in xrange(N)])
         seqB = ''.join([base[np.random.randint(0, 4)] for i in xrange(N)])
         distances.append(editDistance(seqA, seqB))

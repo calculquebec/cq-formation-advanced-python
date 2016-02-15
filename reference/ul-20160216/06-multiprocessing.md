@@ -155,3 +155,13 @@ Time = 8.9762020111083984 sec
 ~~~
 
 Which is pretty close to a 4 times speedup.
+
+> ## Baby Genomics {.challenge}
+> 
+> Use a pool of 4 workers and its map function to parallelize the baby-genomic.py code.
+>
+> __Tip__: use the edProxy() function in order to call the real editDistance function.
+>
+> __Bonus__: use the [asynchronous map function](https://docs.python.org/2/library/multiprocessing.html#multiprocessing.pool.multiprocessing.Pool.map_async) and use the printRes function as a callback to print the results.
+>
+> The solution can be found in the solutions/baby-genomic.py file.
