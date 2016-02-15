@@ -152,7 +152,7 @@ In [2]: %timeit approx_pi(100000000)
 1 loop, best of 3: 414 ms per loop
 ~~~
 
-We are now as fast as our first C code. I will let know have a look for yourself at the generated C code to confirm that the C modulo operator was indeed used.
+We are now as fast as our first C code. I will let you have a look for yourself at the generated C code to confirm that the C modulo operator was indeed used.
 
 A last note about Cython: we have learned how to compile our libraries but Cython also supports JIT compilation just by importing and running a statement before using our function:
 
