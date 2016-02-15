@@ -26,13 +26,13 @@ Similarly, when you run an MPI-enabled program, you will use a launcher to start
 $ mpirun python my_program.py --argument1 ...
 ~~~
 
-The default configuration on most machines, when using OpenMPI, is to use the same number of processes that there are cores available. It is possible to specify exactly the number of processes you want, for example if you are memory constrained. This would launch your program using 4 processes:
+The default configuration on most machines, when using OpenMPI, is to use the same number of processes that there are cores available. It is possible to specify exactly the number of processes you want, for example if you are memory constrained. This would launch your program using 2 processes:
 
 ~~~ {.input}
-$ mpirun -n 4 python my_program.py --argument1 ...
+$ mpirun -n 2 python my_program.py --argument1 ...
 ~~~
 
-If you try to run a non-MPI-enabled program using the mpirun launcher, you will have 4 instances doing exactly the same thing, not communicating with each other. When doing parallel computation, you want to split your input data, like in the multiprocessing example, and distribute it amongst all participant processes.
+If you try to run a non-MPI-enabled program using the mpirun launcher, you will have 2 instances doing exactly the same thing, not communicating with each other. When doing parallel computation, you want to split your input data, like in the multiprocessing example, and distribute it amongst all participant processes.
 
 ### MPI-enabled Python Program
 
@@ -51,6 +51,15 @@ print "I am rank", rank, "of", size
 We first import the MPI library from the mpi4py package. The _comm_ variable stands for communicator, which is a fundamental part of the MPI programming paradigm: all communication between processes or groups of processes are sent using a communicator. You can see it as a pool of processes participating in a meeting. One communicator, called world, always exist and includes all processes.
 
 The other interesting concept is the rank. Each process is assigned a unique number, ranging from 0 to _n_-1, where n is the total number of processes. This unique number is called a rank and is used to communicate with one process in particular.
+
+> ## Smiling Processes {.challenge}
+>
+> Do the following:
+>
+> 1. Run the exercices/smiley.py python script using mpirun and 4 processes.
+> 2. Make each process print a different smiley face.
+>
+> A possible solution can be found in the solutions/smiley.py file.
 
 Let's try our first run of our MPI program:
 
@@ -321,3 +330,15 @@ Time = 8.9309309005737305 sec
 ~~~
 
 Note that, currently, the mpi4py implementation of the reduction operations are done naively and would do exactly what we did previously: gather everything on one rank and sum there. The advantage of using the reduction operation today is that the code is shorter, clearer, and that you will benefit from it once it is implemented in mpi4py without changing anything.
+
+> ## Dot-product {.challenge}
+>
+> Implement a MPI dot product.
+>
+> 1. Rank 0 must initialize the two input vectors a and b where a = [1..n] and b = [n..1]
+> 2. Use the scatter algorithm to split the data between processes.
+> 3. Use the reduce algorithm to compute the final result.
+>
+> __Alternative__: In point 3, use the gather algorithm and let rank 0 compute the final result.
+>
+> A possible solution can be found in the solutions/dot_product.py file.
