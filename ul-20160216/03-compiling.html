@@ -26,7 +26,7 @@
         <div class="col-md-10 col-md-offset-1">
                     <a href="index.html"><h1 class="title">Advanced and Parallel Python</h1></a>
           <h2 class="subtitle">Compiling Python Code</h2>
-          <p>While it might seem un-intuitive to talk about compiling an interpreted language, it is often an easy and overlooked solution to speeding up Python programs. The advantage of being an interpreted language is that most Python compilers do <a href="https://en.wikipedia.org/wiki/Just-in-time_compilation">Just-In-Time compilation</a>, not unlike what <a href="http://pypy.org">PyPy</a> is doing.</p>
+          <p>While it might seem unintuitive to talk about compiling an interpreted language, it is often an easy and overlooked solution to speeding up Python programs. The advantage of being an interpreted language is that most Python compilers do <a href="https://en.wikipedia.org/wiki/Just-in-time_compilation">Just-In-Time compilation</a>, not unlike what <a href="http://pypy.org">PyPy</a> is doing.</p>
 <p>We’ll first have a look at the Cython (not to be confused with CPython). It has both pre-compilation and just-in-time compilation modes. We will use the former for now as it will help us understand what it’s doing and make better use of it.</p>
 <p>It is important to note that Cython scripts use extensions to the language and as such, scripts must not end with the .py extension. The recommended extension is .pyx. Let’s make a copy of our initial script:</p>
 <pre class="input"><code>$ cp approx_pi.py approx_pi_cython.pyx</code></pre>
