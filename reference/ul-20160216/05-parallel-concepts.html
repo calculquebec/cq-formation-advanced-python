@@ -38,8 +38,27 @@
 <h4 id="programming-models">Programming Models</h4>
 <h5 id="shared-memory">Shared Memory</h5>
 <p>This is when parallel software tasks communicate with each other using shared memory. This is mainly used with threads, although processes can communicate with each other using shared memory if they are on the same machine.</p>
+<div class="figure">
+<img src="img/parallel-thread.png" alt="Shared-Memory Parallelism" />
+<p class="caption">Shared-Memory Parallelism</p>
+</div>
+<p>Note that:</p>
+<ul>
+<li>Each parallel portion execute the same copy of the code.</li>
+<li>Each thread has access to the same memory region.</li>
+</ul>
 <h5 id="distributed-memory">Distributed Memory</h5>
 <p>This is when each task has its own memory space. This is for separate processes that can be (or not) on the same machine.</p>
+<div class="figure">
+<img src="img/parallel-process.png" alt="Distributed-Memory Parallelism" />
+<p class="caption">Distributed-Memory Parallelism</p>
+</div>
+<p>Note that:</p>
+<ul>
+<li>Each parallel portion execute their own copy of the code.</li>
+<li>Each process has access to its own memory only.</li>
+<li>Communication is done via shared-memory or network operations.</li>
+</ul>
 <h4 id="race-condition">Race Condition</h4>
 <p>Race conditions arise in software when an application depends on the sequence or timing of processes or threads for it to operate properly.</p>
 <p>Source: <a href="https://en.wikipedia.org/wiki/Race_condition#Software">Wikipedia</a></p>
