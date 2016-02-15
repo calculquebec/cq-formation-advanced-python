@@ -103,7 +103,7 @@ pi = sum(p.map(approx_pi, intervals))
 
 ### Communication
 
-In MPI, there are two communication concepts:
+In MPI, there are two communication patterns:
 
 1. Point to Point: used for exchanging data between two processes.
 2. Collective Operations: used for exchanging data between any number of processes, in one operation.
