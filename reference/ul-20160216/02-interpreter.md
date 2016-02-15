@@ -88,16 +88,41 @@ Let's return to a part the above statement: "integrate systems more effectively"
 
 Python should really be seen as the glue keeping together multiple components (libraries). And since pure Python is usually pretty slow, compared to C, that means you want to integrate components written in C, and spend most of your computation time inside those libraries, not in your Python code.
 
-Let's have a go at optimizing our code using a widely used C-based library, Numpy. Here's a simple version that can be found in the approx_pi_numpy.py file:
+### Numpy
+
+Numpy is a big part of speeding up Python scientific software. Numpy is not the subject of study for this workshop but it is worth mentioning how simple loops can be replaced with Numpy arrays. For example the following equation:
+
+![Simple Sum](img/sum_numpy.png)
+
+Could be reprensented as the following Python code:
 
 ~~~ {.python}
-def approx_pi(intervals):
-    pi1 = 4/numpy.arange(1, intervals*2, 4)
-    pi2 = -4/numpy.arange(3, intervals*2, 4)
-    return numpy.sum(pi1) + numpy.sum(pi2)
+s = 0.
+for i in range(N):
+    s += i/10.
 ~~~
 
-And now we run it:
+And could be replaced by this single, very efficient, statement:
+
+~~~ {.python}
+s = numpy.sum(numpy.arange(N)/10.)
+~~~
+
+> ## Using Numpy {.challenge}
+> 
+> Use Numpy's _arange_ function to speed up the following code:
+>
+> ~~~ {.python}
+> def approx_pi(intervals):
+>     pi = 0.0
+>     for i in range(intervals):
+>         pi += (4 - 8 * (i % 2)) / (float)(2 * i + 1)
+>     return pi
+> ~~~
+>
+> The solution can be found in the solutions/approx_pi_numpy.py file.
+
+Running the solution for the previous challenge would yield this result:
 
 ~~~ {.input}
 $ python approx_pi_numpy.py 100000000

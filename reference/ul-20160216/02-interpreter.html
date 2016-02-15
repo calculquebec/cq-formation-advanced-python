@@ -76,12 +76,33 @@ Time = 0.7333470000000000 sec</code></pre>
 </ol>
 <p>Let’s return to a part the above statement: “integrate systems more effectively”.</p>
 <p>Python should really be seen as the glue keeping together multiple components (libraries). And since pure Python is usually pretty slow, compared to C, that means you want to integrate components written in C, and spend most of your computation time inside those libraries, not in your Python code.</p>
-<p>Let’s have a go at optimizing our code using a widely used C-based library, Numpy. Here’s a simple version that can be found in the approx_pi_numpy.py file:</p>
+<h3 id="numpy">Numpy</h3>
+<p>Numpy is a big part of speeding up Python scientific software. Numpy is not the subject of study for this workshop but it is worth mentioning how simple loops can be replaced with Numpy arrays. For example the following equation:</p>
+<div class="figure">
+<img src="img/sum_numpy.png" alt="Simple Sum" />
+<p class="caption">Simple Sum</p>
+</div>
+<p>Could be reprensented as the following Python code:</p>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">s <span class="op">=</span> <span class="dv">0</span>.
+<span class="cf">for</span> i <span class="op">in</span> <span class="bu">range</span>(N):
+    s <span class="op">+=</span> i<span class="op">/</span><span class="dv">10</span>.</code></pre></div>
+<p>And could be replaced by this single, very efficient, statement:</p>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">s <span class="op">=</span> numpy.<span class="bu">sum</span>(numpy.arange(N)<span class="op">/</span><span class="dv">10</span>.)</code></pre></div>
+<section class="challenge panel panel-success">
+<div class="panel-heading">
+<h2 id="using-numpy"><span class="glyphicon glyphicon-pencil"></span>Using Numpy</h2>
+</div>
+<div class="panel-body">
+<p>Use Numpy’s <em>arange</em> function to speed up the following code:</p>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="kw">def</span> approx_pi(intervals):
-    pi1 <span class="op">=</span> <span class="dv">4</span><span class="op">/</span>numpy.arange(<span class="dv">1</span>, intervals<span class="op">*</span><span class="dv">2</span>, <span class="dv">4</span>)
-    pi2 <span class="op">=</span> <span class="op">-</span><span class="dv">4</span><span class="op">/</span>numpy.arange(<span class="dv">3</span>, intervals<span class="op">*</span><span class="dv">2</span>, <span class="dv">4</span>)
-    <span class="cf">return</span> numpy.<span class="bu">sum</span>(pi1) <span class="op">+</span> numpy.<span class="bu">sum</span>(pi2)</code></pre></div>
-<p>And now we run it:</p>
+    pi <span class="op">=</span> <span class="fl">0.0</span>
+    <span class="cf">for</span> i <span class="op">in</span> <span class="bu">range</span>(intervals):
+        pi <span class="op">+=</span> (<span class="dv">4</span> <span class="op">-</span> <span class="dv">8</span> <span class="op">*</span> (i <span class="op">%</span> <span class="dv">2</span>)) <span class="op">/</span> (<span class="bu">float</span>)(<span class="dv">2</span> <span class="op">*</span> i <span class="op">+</span> <span class="dv">1</span>)
+    <span class="cf">return</span> pi</code></pre></div>
+<p>The solution can be found in the solutions/approx_pi_numpy.py file.</p>
+</div>
+</section>
+<p>Running the solution for the previous challenge would yield this result:</p>
 <pre class="input"><code>$ python approx_pi_numpy.py 100000000</code></pre>
 <pre class="output"><code>PI is approximately 3.1415926435844881, Error is 0.0000000100053050
 Time = 1.2332240000000001 sec</code></pre>
