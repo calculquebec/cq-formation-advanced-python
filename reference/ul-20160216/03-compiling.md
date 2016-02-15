@@ -166,6 +166,18 @@ In [3]: %timeit approx_pi(100000000)
 1 loop, best of 3: 407 ms per loop
 ~~~
 
+> ## Data Processing {.challenge}
+>
+> Try optimizing the exercices/process_data.py script using the Cython compiler. What speedup can you achieve?
+>
+> __Tip__: Before running the script, make a copy, generate a random sample and work on the pyx file:
+>
+> ~~~ {.input}
+> cd exercices/ && python gen_inputs.py && cp process_data.py process_data.pyx
+> ~~~
+>
+> A possible solution can be found in the solutions/process_data_cython.py file.
+
 ### Numba
 
 Another option for JIT compiling is the [Numba project](http://numba.pydata.org/). The Numba compiler is provided by Continuum Analytics, which also distribute the Anaconda Python distribution. In its simpler form, you only need to add the @jit annotation to the code you want to speed up:
