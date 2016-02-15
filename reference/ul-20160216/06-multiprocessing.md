@@ -83,7 +83,7 @@ Now let's see how we can prepare those intervals. We'll assume 4 processes for n
     intervals[-1][1] = max(intervals[-1][1], n)
 ~~~
 
-The last line is to make sure that if the number of iterations is ot entirely divisible by the number of processes, we do them in the last process instead. If we output those intervals, for 4 processes and 100 million iterations, we get the following:
+The last line is to make sure that if the number of iterations is not entirely divisible by the number of processes, we do them in the last process instead. If we output those intervals, for 4 processes and 100 million iterations, we get the following:
 
 ~~~ {.python}
     print "Intervals: ",intervals

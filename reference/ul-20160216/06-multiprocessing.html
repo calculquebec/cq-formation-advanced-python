@@ -74,7 +74,7 @@ Time = 34.1915959999999970 sec</code></pre>
     chunk_size <span class="op">=</span> n<span class="op">/</span><span class="dv">4</span>
     intervals <span class="op">=</span> <span class="bu">map</span>(<span class="kw">lambda</span> p: [p<span class="op">*</span>chunk_size, p<span class="op">*</span>chunk_size<span class="op">+</span>chunk_size], <span class="bu">range</span>(<span class="dv">4</span>))
     intervals[<span class="op">-</span><span class="dv">1</span>][<span class="dv">1</span>] <span class="op">=</span> <span class="bu">max</span>(intervals[<span class="op">-</span><span class="dv">1</span>][<span class="dv">1</span>], n)</code></pre></div>
-<p>The last line is to make sure that if the number of iterations is ot entirely divisible by the number of processes, we do them in the last process instead. If we output those intervals, for 4 processes and 100 million iterations, we get the following:</p>
+<p>The last line is to make sure that if the number of iterations is not entirely divisible by the number of processes, we do them in the last process instead. If we output those intervals, for 4 processes and 100 million iterations, we get the following:</p>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">    <span class="bu">print</span> <span class="st">&quot;Intervals: &quot;</span>,intervals</code></pre></div>
 <pre class="output"><code>Intervals:  [[0, 25000000], [25000000, 50000000], [50000000, 75000000], [75000000, 100000000]]</code></pre>
 <p>Once we have our input data split up correctly, we can try to apply our new function, without any parallelization:</p>
