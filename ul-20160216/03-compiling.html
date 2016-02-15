@@ -26,7 +26,8 @@
         <div class="col-md-10 col-md-offset-1">
                     <a href="index.html"><h1 class="title">Advanced and Parallel Python</h1></a>
           <h2 class="subtitle">Compiling Python Code</h2>
-          <p>While it might seem unintuitive to talk about compiling an interpreted language, it is often an easy and overlooked solution to speeding up Python programs. The advantage of being an interpreted language is that most Python compilers do <a href="https://en.wikipedia.org/wiki/Just-in-time_compilation">Just-In-Time compilation</a>, not unlike what <a href="http://pypy.org">PyPy</a> is doing.</p>
+          <p>While it might seem unintuitive to talk about compiling an interpreted language, it is often an easy and overlooked solution to speeding up Python programs. The advantage of being an interpreted language is that most Python compilers do <a href="https://en.wikipedia.org/wiki/Just-in-time_compilation">Just-In-Time (JIT) compilation</a>, not unlike what <a href="http://pypy.org">PyPy</a> is doing.</p>
+<h3 id="cython">Cython</h3>
 <p>We’ll first have a look at the Cython (not to be confused with CPython). It has both pre-compilation and just-in-time compilation modes. We will use the former for now as it will help us understand what it’s doing and make better use of it.</p>
 <p>It is important to note that Cython scripts use extensions to the language and as such, scripts must not end with the .py extension. The recommended extension is .pyx. Let’s make a copy of our initial script:</p>
 <pre class="input"><code>$ cp approx_pi.py approx_pi_cython.pyx</code></pre>
@@ -112,12 +113,33 @@ $ ipython</code></pre>
 In [2]: %timeit approx_pi(100000000)
 1 loop, best of 3: 414 ms per loop</code></pre>
 <p>We are now as fast as our first C code. I will let know have a look for yourself at the generated C code to confirm that the C modulo operator was indeed used.</p>
-<p>A last note about Cython: we have learned how to compile our libraries but Cython also supports Just-In-Time compilation just by importing and running a statement before using our function:</p>
+<p>A last note about Cython: we have learned how to compile our libraries but Cython also supports JIT compilation just by importing and running a statement before using our function:</p>
 <pre class="input"><code>$ make clean &amp;&amp; ipython</code></pre>
 <pre class="output"><code>In [1]: import pyximport; pyximport.install()
 In [2]: from approx_pi_cython import approx_pi
 In [3]: %timeit approx_pi(100000000)
 1 loop, best of 3: 407 ms per loop</code></pre>
+<h3 id="numba">Numba</h3>
+<p>Another option for JIT compiling is the <a href="http://numba.pydata.org/">Numba project</a>. The Numba compiler is provided by Continuum Analytics, which also distribute the Anaconda Python distribution. In its simpler form, you only need to add the <span class="citation">@jit</span> annotation to the code you want to speed up:</p>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="at">@jit</span>
+<span class="kw">def</span> approx_pi(intervals):
+    pi <span class="op">=</span> <span class="fl">0.0</span>
+    <span class="cf">for</span> i <span class="op">in</span> <span class="bu">range</span>(intervals):
+        pi <span class="op">+=</span> (<span class="dv">4</span> <span class="op">-</span> <span class="dv">8</span> <span class="op">*</span> (i <span class="op">%</span> <span class="dv">2</span>)) <span class="op">/</span> (<span class="bu">float</span>)(<span class="dv">2</span> <span class="op">*</span> i <span class="op">+</span> <span class="dv">1</span>)
+    <span class="cf">return</span> pi</code></pre></div>
+<p>This would result in the following execution:</p>
+<pre class="input"><code>$ python approx_pi_numba1.py 100000000</code></pre>
+<pre class="output"><code>PI is approximately 3.1415926435893260, Error is 0.0000000100004671
+Time = 0.9381080000000001 sec</code></pre>
+<p>Also, keep in mind that, altough it might be worth a try, applying the Numba <span class="citation">@jit</span> annotation doesn’t provid much more gain when your code already uses Numpy:</p>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="at">@jit</span>
+<span class="kw">def</span> approx_pi(intervals):
+    pi1 <span class="op">=</span> <span class="dv">4</span><span class="op">/</span>numpy.arange(<span class="dv">1</span>, intervals, <span class="dv">4</span>)
+    pi2 <span class="op">=</span> <span class="op">-</span><span class="dv">4</span><span class="op">/</span>numpy.arange(<span class="dv">3</span>, intervals, <span class="dv">4</span>)
+    <span class="cf">return</span> numpy.<span class="bu">sum</span>(pi1) <span class="op">+</span> numpy.<span class="bu">sum</span>(pi2)</code></pre></div>
+<pre class="input"><code>$ python approx_pi_numba2.py 100000000</code></pre>
+<pre class="output"><code>PI is approximately 3.1415926335840005, Error is 0.0000000200057926
+Time = 0.7805560000000000 sec</code></pre>
         </div>
       </div>
       </article>

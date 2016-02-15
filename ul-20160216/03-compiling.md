@@ -4,7 +4,9 @@ title: Advanced and Parallel Python
 subtitle: Compiling Python Code
 ---
 
-While it might seem unintuitive to talk about compiling an interpreted language, it is often an easy and overlooked solution to speeding up Python programs. The advantage of being an interpreted language is that most Python compilers do [Just-In-Time compilation](https://en.wikipedia.org/wiki/Just-in-time_compilation), not unlike what [PyPy](http://pypy.org) is doing.
+While it might seem unintuitive to talk about compiling an interpreted language, it is often an easy and overlooked solution to speeding up Python programs. The advantage of being an interpreted language is that most Python compilers do [Just-In-Time (JIT) compilation](https://en.wikipedia.org/wiki/Just-in-time_compilation), not unlike what [PyPy](http://pypy.org) is doing.
+
+### Cython
 
 We'll first have a look at the Cython (not to be confused with CPython). It has both pre-compilation and just-in-time compilation modes. We will use the former for now as it will help us understand what it's doing and make better use of it.
 
@@ -152,7 +154,7 @@ In [2]: %timeit approx_pi(100000000)
 
 We are now as fast as our first C code. I will let know have a look for yourself at the generated C code to confirm that the C modulo operator was indeed used.
 
-A last note about Cython: we have learned how to compile our libraries but Cython also supports Just-In-Time compilation just by importing and running a statement before using our function:
+A last note about Cython: we have learned how to compile our libraries but Cython also supports JIT compilation just by importing and running a statement before using our function:
 
 ~~~ {.input}
 $ make clean && ipython
@@ -162,4 +164,44 @@ In [1]: import pyximport; pyximport.install()
 In [2]: from approx_pi_cython import approx_pi
 In [3]: %timeit approx_pi(100000000)
 1 loop, best of 3: 407 ms per loop
+~~~
+
+### Numba
+
+Another option for JIT compiling is the [Numba project](http://numba.pydata.org/). The Numba compiler is provided by Continuum Analytics, which also distribute the Anaconda Python distribution. In its simpler form, you only need to add the @jit annotation to the code you want to speed up:
+ 
+~~~ {.python}
+@jit
+def approx_pi(intervals):
+    pi = 0.0
+    for i in range(intervals):
+        pi += (4 - 8 * (i % 2)) / (float)(2 * i + 1)
+    return pi
+~~~
+
+This would result in the following execution:
+
+~~~ {.input}
+$ python approx_pi_numba1.py 100000000
+~~~
+~~~ {.output}
+PI is approximately 3.1415926435893260, Error is 0.0000000100004671
+Time = 0.9381080000000001 sec
+~~~
+
+Also, keep in mind that, altough it might be worth a try, applying the Numba @jit annotation doesn't provid much more gain when your code already uses Numpy:
+
+~~~ {.python}
+@jit
+def approx_pi(intervals):
+    pi1 = 4/numpy.arange(1, intervals, 4)
+    pi2 = -4/numpy.arange(3, intervals, 4)
+    return numpy.sum(pi1) + numpy.sum(pi2)
+~~~
+~~~ {.input}
+$ python approx_pi_numba2.py 100000000
+~~~
+~~~ {.output}
+PI is approximately 3.1415926335840005, Error is 0.0000000200057926
+Time = 0.7805560000000000 sec
 ~~~
