@@ -203,7 +203,7 @@ PI is approximately 3.1415926435893260, Error is 0.0000000100004671
 Time = 0.9381080000000001 sec
 ~~~
 
-Also, keep in mind that, altough it might be worth a try, applying the Numba @jit annotation doesn't provid much more gain when your code already uses Numpy:
+Also, keep in mind that, altough it might be worth a try, applying the Numba @jit annotation doesn't provide much more gain when your code already uses Numpy:
 
 ~~~ {.python}
 @jit
