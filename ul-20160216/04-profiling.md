@@ -358,3 +358,15 @@ sys 0m0.029s
 ~~~
 
 So in the end, we could get about 65 times faster in a really short amount of time.
+
+> ## More Data Processing {.challenge}
+>
+> Try optimizing the exercices/process_data.py script by first using a profiler and finding hotspots.
+>
+> __Tip__: Before running the script, generate a random sample.
+>
+> ~~~ {.input}
+> cd exercices/ && python gen_inputs.py
+> ~~~
+>
+> A possible solution can be found in the solutions/process_data.py file.
