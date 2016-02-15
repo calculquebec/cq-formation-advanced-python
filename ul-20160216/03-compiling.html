@@ -144,7 +144,7 @@ In [3]: %timeit approx_pi(100000000)
 <pre class="input"><code>$ python approx_pi_numba1.py 100000000</code></pre>
 <pre class="output"><code>PI is approximately 3.1415926435893260, Error is 0.0000000100004671
 Time = 0.9381080000000001 sec</code></pre>
-<p>Also, keep in mind that, altough it might be worth a try, applying the Numba <span class="citation">@jit</span> annotation doesn’t provid much more gain when your code already uses Numpy:</p>
+<p>Also, keep in mind that, altough it might be worth a try, applying the Numba <span class="citation">@jit</span> annotation doesn’t provide much more gain when your code already uses Numpy:</p>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="at">@jit</span>
 <span class="kw">def</span> approx_pi(intervals):
     pi1 <span class="op">=</span> <span class="dv">4</span><span class="op">/</span>numpy.arange(<span class="dv">1</span>, intervals, <span class="dv">4</span>)
