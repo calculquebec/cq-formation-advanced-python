@@ -28,7 +28,7 @@ Reference: [http://www.scipy.org/](http://www.scipy.org/)
 
 This web interface to the IPython shell is an interactive computational environment enabling reproducible research.
 
-Reference: (http://ipython.org/notebook.html)[http://ipython.org/notebook.html]
+Reference: [http://ipython.org/notebook.html](http://ipython.org/notebook.html)
 
 ### Matplotlib
 
