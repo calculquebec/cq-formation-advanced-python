@@ -114,8 +114,9 @@ We will re-implement the previous example, in turn, using both communication pat
 
 This mode of communication implies that one process can talk to only one other process at a time. One approach we could use in our implementation is to elect a process as our master process, and make it compute our intervals and send it to each other processes, one at a time. We will use our rank 0 for this task.
 
-*** add note ***
-In most MPI program, rank 0 is doing more things like initialization or data distribution. Keep in mind that this is a design decision and that rank 0 is exactly the same as other processes. It just happens that rank 0 will always exist (since it's the first process) so people tend to choose that one for this coordinating role.
+> ## Rank 0 {.callout}
+> 
+> In most MPI program, rank 0 is doing more things like initialization or data distribution. Keep in mind that this is a design decision and that rank 0 is exactly the same as other processes. It just happens that rank 0 will always exist (since it's the first process) so people tend to choose that one for this coordinating role.
 
 The first thing we will add is the MPI library import:
 
