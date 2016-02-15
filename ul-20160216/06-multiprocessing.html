@@ -110,6 +110,17 @@ Time = 0.0305790000000000 sec</code></pre>
 <pre class="output"><code>PI is approximately 3.1415926435898172, Error is 0.0000000099999760
 Time = 8.9762020111083984 sec</code></pre>
 <p>Which is pretty close to a 4 times speedup.</p>
+<section class="challenge panel panel-success">
+<div class="panel-heading">
+<h2 id="baby-genomics"><span class="glyphicon glyphicon-pencil"></span>Baby Genomics</h2>
+</div>
+<div class="panel-body">
+<p>Use a pool of 4 workers and its map function to parallelize the baby-genomic.py code.</p>
+<p><strong>Tip</strong>: use the edProxy() function in order to call the real editDistance function.</p>
+<p><strong>Bonus</strong>: use the <a href="https://docs.python.org/2/library/multiprocessing.html#multiprocessing.pool.multiprocessing.Pool.map_async">asynchronous map function</a> and use the printRes function as a callback to print the results.</p>
+<p>The solution can be found in the solutions/baby-genomic.py file.</p>
+</div>
+</section>
         </div>
       </div>
       </article>
