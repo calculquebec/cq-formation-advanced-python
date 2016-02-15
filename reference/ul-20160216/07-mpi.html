@@ -99,7 +99,14 @@ pi <span class="op">=</span> <span class="bu">sum</span>(p.<span class="bu">map<
 <p>We will re-implement the previous example, in turn, using both communication patterns.</p>
 <h4 id="point-to-point">Point to Point</h4>
 <p>This mode of communication implies that one process can talk to only one other process at a time. One approach we could use in our implementation is to elect a process as our master process, and make it compute our intervals and send it to each other processes, one at a time. We will use our rank 0 for this task.</p>
-<p>*** add note *** In most MPI program, rank 0 is doing more things like initialization or data distribution. Keep in mind that this is a design decision and that rank 0 is exactly the same as other processes. It just happens that rank 0 will always exist (since it’s the first process) so people tend to choose that one for this coordinating role.</p>
+<aside class="callout panel panel-info">
+<div class="panel-heading">
+<h2 id="rank-0"><span class="glyphicon glyphicon-pushpin"></span>Rank 0</h2>
+</div>
+<div class="panel-body">
+<p>In most MPI program, rank 0 is doing more things like initialization or data distribution. Keep in mind that this is a design decision and that rank 0 is exactly the same as other processes. It just happens that rank 0 will always exist (since it’s the first process) so people tend to choose that one for this coordinating role.</p>
+</div>
+</aside>
 <p>The first thing we will add is the MPI library import:</p>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="im">from</span> mpi4py <span class="im">import</span> MPI</code></pre></div>
 <p>In our previous example, we had split our inputs into 4 intervals, assuming 4 processes. We want to become more generic here and plan for any number of processes:</p>
