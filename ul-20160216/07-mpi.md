@@ -335,6 +335,7 @@ Note that, currently, the mpi4py implementation of the reduction operations are 
 > ## Dot-product {.challenge}
 >
 > Implement a MPI dot product.
+> The dot product of two vectors A and B of length n is the sum of the element-wise product of those vectors. That is, the sum of A_i * B_i, for i varying between 1 and n.
 >
 > 1. Rank 0 must initialize the two input vectors a and b where a = [1..n] and b = [n..1]
 > 2. Use the scatter algorithm to split the data between processes.
