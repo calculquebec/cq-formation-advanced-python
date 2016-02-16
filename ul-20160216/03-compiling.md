@@ -130,6 +130,9 @@ Everything looks almost right. Our variables are now native types (double and in
 
 ~~~ {.python}
 #cython:cdivision=True
+
+...
+
 def approx_pi(int intervals):
     cdef double pi
     cdef int i
@@ -138,6 +141,8 @@ def approx_pi(int intervals):
         pi += (4 - 8 * (i % 2)) / (float)(2 * i + 1)
     return pi
 ~~~
+
+Note that the #cython compiler directive must be at the very beginning of your pyx file. To access the list of valid compiler directives, head over to the [Cython documentation page](http://docs.cython.org/src/reference/compilation.html#compiler-directives).
 
 And we compile yet again our Cython code:
 
