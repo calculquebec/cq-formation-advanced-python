@@ -98,6 +98,9 @@ In [2]: %timeit approx_pi(100000000)
     __pyx_t_3 = (<span class="dv">4</span> - (<span class="dv">8</span> * __Pyx_mod_long(__pyx_v_i, <span class="dv">2</span>)));</code></pre></div>
 <p>Everything looks almost right. Our variables are now native types (double and int). The only thing left is this call to __Pyx_mod_long instead of the (way faster) C modulo operator (%). This is done mainly because of different behavior when using negative numbers. In C, -1%10 == -1 and in Python, -1%10 == 9. Since we know we won’t have any negative numbers going from 0 to intervals-1, we can safely tell the Cython compiler to use the native modulo operator:</p>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="co">#cython:cdivision=True</span>
+
+...
+
 <span class="kw">def</span> approx_pi(<span class="bu">int</span> intervals):
     cdef double pi
     cdef <span class="bu">int</span> i
@@ -105,6 +108,7 @@ In [2]: %timeit approx_pi(100000000)
     <span class="cf">for</span> i <span class="op">in</span> <span class="bu">range</span>(intervals):
         pi <span class="op">+=</span> (<span class="dv">4</span> <span class="op">-</span> <span class="dv">8</span> <span class="op">*</span> (i <span class="op">%</span> <span class="dv">2</span>)) <span class="op">/</span> (<span class="bu">float</span>)(<span class="dv">2</span> <span class="op">*</span> i <span class="op">+</span> <span class="dv">1</span>)
     <span class="cf">return</span> pi</code></pre></div>
+<p>Note that the #cython compiler directive must be at the very beginning of your pyx file. To access the list of valid compiler directives, head over to the <a href="http://docs.cython.org/src/reference/compilation.html#compiler-directives">Cython documentation page</a>.</p>
 <p>And we compile yet again our Cython code:</p>
 <pre class="input"><code>$ python setup_cython.py build_ext --inplace
 ...
