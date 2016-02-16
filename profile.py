@@ -2,7 +2,7 @@ import sys
 import time
 import random
 
-random.seed(time.time())
+random.seed(1234)
 
 def gen_data(n):
     numbers = []
