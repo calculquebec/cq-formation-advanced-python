@@ -42,9 +42,9 @@ def process_B(m1, m2):
     """
 
     diff = 0.
-    for i in range(len(data)):
-        for j in range(len(data[i])):
-            diff += result_1[i][j] - data[i][j]
+    for i in range(len(m1)):
+        for j in range(len(m1[i])):
+            diff += m2[i][j] - m1[i][j]
     return diff
 
 def main():
