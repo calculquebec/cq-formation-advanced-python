@@ -4,4 +4,3 @@ build/
 approx_pi_cython*.c
 approx_pi_cython*.so
 *.lprof
-reference/*.html
